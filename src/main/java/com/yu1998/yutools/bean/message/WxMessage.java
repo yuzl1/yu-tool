@@ -1,4 +1,4 @@
-package com.yu1998.bean.message;
+package com.yu1998.yutools.bean.message;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;

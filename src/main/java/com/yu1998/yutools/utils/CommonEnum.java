@@ -1,4 +1,4 @@
-package com.yu1998.utils;
+package com.yu1998.yutools.utils;
 
 /**
  * @author Duke_yzl

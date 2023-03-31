@@ -1,4 +1,4 @@
-package com.yu1998.exception;
+package com.yu1998.yutools.exception;
 
 /**
  * @author Duke_yzl

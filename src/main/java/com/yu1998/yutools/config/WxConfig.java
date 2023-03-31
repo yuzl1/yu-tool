@@ -1,4 +1,4 @@
-package com.yu1998.config;
+package com.yu1998.yutools.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

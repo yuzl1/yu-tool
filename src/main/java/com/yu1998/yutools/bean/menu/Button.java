@@ -1,4 +1,4 @@
-package com.yu1998.bean.menu;
+package com.yu1998.yutools.bean.menu;
 
 import lombok.Builder;
 import lombok.Data;
