@@ -1,4 +1,11 @@
-wx: 
-    appid: 123
-    appsecret: 456
-    redirectUri: http://127.0.0.1:8080/wx/getwebaccesstoken
+wx:
+  #公众号appid
+  appid: wx8c39f3c5922f3fbb
+  #公众号appsecret
+  appsecret: e383c7403b2a85cb52d407858444a9c9
+  #小程序appid 可选 需要跳转到小程序时添加
+  appletAppid: xxx
+  #小程序appsecret 可选
+  appletAppsecret: xxx
+  #网页授权回调地址
+  redirectUri: axc
