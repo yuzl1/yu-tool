@@ -9,6 +9,8 @@ import lombok.Data;
  */
 @Data
 public class WxConfig {
+
+    private String redisTokenKey = "yutools_wx_access_token";
     private String appid;
     private String appsecret;
     private String appletAppid;
