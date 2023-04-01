@@ -1,12 +1,8 @@
 package com.yu1998.yutools.bean.message;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.yu1998.yutools.config.WxConfig;
-import com.yu1998.yutools.exception.YuToolsException;
-import com.yu1998.yutools.utils.WxCommonUtil;
+import com.yu1998.yutools.bean.config.WxConfig;
 import lombok.Data;
 
 import java.util.Map;

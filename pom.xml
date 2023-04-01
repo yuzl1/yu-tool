@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.yu1998</groupId>
     <artifactId>yu-tool</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>yu-tool</name>
     <description>yu-tool</description>
     <properties>
@@ -44,10 +44,20 @@
             <version>5.8.12</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>yu-tool</finalName>
+        <finalName>yu-tool-${version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
