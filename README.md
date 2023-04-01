@@ -1,23 +1,30 @@
 # yuTool
 
 #### 介绍
-工具类1
+工具类 主要用于微信的模版消息推送 菜单设置
 
 #### 软件架构
 软件架构说明
+基于springboot创建
+引用了hutool工具类
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  在项目根目录 执行mvn clean install 打包后在项目引用
+
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  项目中基于springboot  请在springboot项目中进行引用 
+2. 引用依赖以后需要在启动类添加@EnableYuTools 将回启动注入
+3. 采用了redis使用，使用此工具需要在项目中配置redis配置
+
+#### 配置项
+
+![工具类配置项](./img/yutoolyml.png "工具类配置项")
+![redis配置项](./img/redisyml.png "redis配置项")
+
 
 #### 参与贡献
 
@@ -28,11 +35,4 @@
 
 
 
-#### 特技
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
