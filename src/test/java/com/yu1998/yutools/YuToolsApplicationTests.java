@@ -1,16 +1,11 @@
 package com.yu1998.yutools;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.json.JSONUtil;
-import com.yu1998.yutools.bean.menu.Button;
-import com.yu1998.yutools.bean.menu.ButtonEnum;
-import com.yu1998.yutools.bean.menu.Menu;
 import com.yu1998.yutools.bean.message.WxMessage;
 import com.yu1998.yutools.bean.message.WxMessageData;
-import com.yu1998.yutools.config.WxConfig;
+import com.yu1998.yutools.config.YuToolsConfig;
 import com.yu1998.yutools.exception.YuToolsException;
 import com.yu1998.yutools.utils.WxCommonUtil;
-import lombok.Data;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -21,13 +16,15 @@ import java.util.*;
 class YuToolsApplicationTests {
 
 	@Resource
-	private WxConfig wxConfig;
+	private YuToolsConfig yuToolsConfig;
 
+	@Resource
+	private WxCommonUtil wxCommonUtil;
 
 	@Test
 	void contextLoads() throws YuToolsException {
 		//-----------模版消息--------------
-		WxMessage wxMessage = new WxMessage(wxConfig);
+		WxMessage wxMessage = new WxMessage(yuToolsConfig);
 		Map<String, WxMessageData> objMap = new HashMap<>();
 		objMap.put("character_string01", WxMessageData.builder().value(String.valueOf(new Date().getTime())).color("#173177").build());
 		objMap.put("short_thing01", WxMessageData.builder().value("派单").color("#173177").build());
@@ -36,7 +33,6 @@ class YuToolsApplicationTests {
 		objMap.put("character_string03", WxMessageData.builder().value("北京301解放军总院").color("#173177").build());
 		wxMessage.createJson("okaFC5_h47THVDnN9uAdCoXIkiMY", "NYiXJBn_4oWqdcuVAq0UuvEqlZxqgJvbcHmaJeBRVyc", null, false, null, null, objMap);
 		
-		WxCommonUtil wxCommonUtil = new WxCommonUtil(wxConfig);
 		System.out.println(wxCommonUtil.getAccessToken());
 		wxCommonUtil.sendMessage(wxMessage.getMessageBody());
 		System.out.println("测试".length());

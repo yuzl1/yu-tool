@@ -1,19 +1,19 @@
 package com.yu1998.yutools.utils;
 
-import cn.hutool.cache.CacheUtil;
-import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.yu1998.yutools.bean.menu.Menu;
-import com.yu1998.yutools.config.WxConfig;
+import com.yu1998.yutools.config.YuToolsConfig;
 import com.yu1998.yutools.exception.YuToolsException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Duke_yzl
@@ -22,33 +22,43 @@ import javax.annotation.Resource;
  */
 @Data
 @Slf4j
+@Component
 public class WxCommonUtil {
 
-    private WxConfig wxConfig;
+    @Resource
+    private YuToolsConfig yuToolsConfig;
+
 
     /** 全局token */
     private String accessToken;
     /** token过期时间  */
-    private String expiresIn;
-    public WxCommonUtil(WxConfig wxConfig){
-        this.wxConfig = wxConfig;
-    }
+    private long expiresIn;
 
+//    @PostConstruct
+//    public void init() throws YuToolsException {
+//        getAccessTokenUri();
+//    }
     /**
      * 获取微信全局token
      * @throws YuToolsException
      */
     public void getAccessTokenUri() throws YuToolsException{
-        String uri = StrUtil.format(wxConfig.getAccessTokenUri(), wxConfig.getAppid(), wxConfig.getAppsecret());
-        log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
-        String restfulBody = HttpRequest.get(uri).execute().body();
-        log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
-        JSONObject restfulJson = JSONUtil.parseObj(restfulBody);
-        this.accessToken = restfulJson.getStr("access_token");
-        this.expiresIn = restfulJson.getStr("expires_in");
-        if(StrUtil.isEmptyIfStr(accessToken)){
-            throw new YuToolsException(CommonEnum.ERROR_TOKEN.getDesc());
+        this.accessToken = YuToolsRedisUtil.get(yuToolsConfig.getWx().getRedisTokenKey());
+        if(StrUtil.isEmpty(accessToken)){
+            String uri = StrUtil.format(yuToolsConfig.getWx().getAccessTokenUri(), yuToolsConfig.getWx().getAppid(), yuToolsConfig.getWx().getAppsecret());
+            log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+            String restfulBody = HttpRequest.get(uri).execute().body();
+            log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+            JSONObject restfulJson = JSONUtil.parseObj(restfulBody);
+            this.accessToken = restfulJson.getStr("access_token");
+            this.expiresIn = restfulJson.getLong("expires_in");
+            YuToolsRedisUtil.set(yuToolsConfig.getWx().getRedisTokenKey(),accessToken,--expiresIn, TimeUnit.SECONDS);
+            if(StrUtil.isEmpty(accessToken)){
+                throw new YuToolsException(CommonEnum.ERROR_TOKEN.getDesc());
+            }
         }
+
+
     }
 
     /**
@@ -57,7 +67,8 @@ public class WxCommonUtil {
      * @throws YuToolsException
      */
     public void sendMessage(String messageBody) throws YuToolsException {
-        String uri =StrUtil.format(wxConfig.getSendMessageUri(), this.accessToken);
+        this.getAccessTokenUri();
+        String uri =StrUtil.format(yuToolsConfig.getWx().getSendMessageUri(), this.accessToken);
         log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
         String restfulBody = HttpRequest.post(uri).body(messageBody).execute().body();
         log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
@@ -73,7 +84,8 @@ public class WxCommonUtil {
      * @throws YuToolsException
      */
     public void sendMenu(Menu menu) throws YuToolsException{
-        String uri = StrUtil.format(wxConfig.getSendMenuUri(), this.accessToken);
+        this.getAccessTokenUri();
+        String uri = StrUtil.format(yuToolsConfig.getWx().getSendMenuUri(), this.accessToken);
         log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
         String restfulBody = HttpRequest.post(uri).body(JSONUtil.toJsonStr(menu)).execute().body();
         log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);

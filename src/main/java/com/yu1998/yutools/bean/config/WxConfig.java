@@ -1,19 +1,15 @@
-package com.yu1998.yutools.config;
+package com.yu1998.yutools.bean.config;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Duke_yzl
- * @date 20230219.01
+ * @date 20230331.01
  * @describe：
  */
 @Data
-@Component
-@ConfigurationProperties(value = "wx")
 public class WxConfig {
+    private String redisTokenKey = "yutools_wx_access_token";
     private String appid;
     private String appsecret;
     private String appletAppid;
@@ -27,5 +23,4 @@ public class WxConfig {
     private String accessTokenUri = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}";
     private String sendMessageUri = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}";
     private String sendMenuUri = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={}";
-
 }

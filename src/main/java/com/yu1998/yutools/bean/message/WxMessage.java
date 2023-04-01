@@ -1,12 +1,8 @@
 package com.yu1998.yutools.bean.message;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.yu1998.yutools.config.WxConfig;
-import com.yu1998.yutools.exception.YuToolsException;
-import com.yu1998.yutools.utils.WxCommonUtil;
+import com.yu1998.yutools.config.YuToolsConfig;
 import lombok.Data;
 
 import java.util.Map;
@@ -20,7 +16,7 @@ import java.util.Map;
 public class WxMessage {
 
 
-    private transient WxConfig wxConfig;
+    private transient YuToolsConfig yuToolsConfig;
 
     /**接收者openid **/
     private String touser;
@@ -36,8 +32,8 @@ public class WxMessage {
     /** 防重入id。对于同一个openid + client_msg_id, 只发送一条消息,10分钟有效,超过10分钟不保证效果。若无防重入需求，可不填 **/
     private String client_msg_id;
 
-    public WxMessage(WxConfig wxConfig){
-        this.wxConfig = wxConfig;
+    public WxMessage(YuToolsConfig yuToolsConfig){
+        this.yuToolsConfig = yuToolsConfig;
     }
 
     /**
@@ -57,7 +53,7 @@ public class WxMessage {
             this.url = url;
         }
         if (isToApplet){
-            this.miniprogram.setAppid(this.wxConfig.getAppletAppid());
+            this.miniprogram.setAppid(this.yuToolsConfig.getWx().getAppletAppid());
             if (StrUtil.isNotEmpty(pagepath)){
                 this.miniprogram.setPagepath(pagepath);
             }
