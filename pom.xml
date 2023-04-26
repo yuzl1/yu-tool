@@ -57,7 +57,7 @@
     </dependencies>
 
     <build>
-        <finalName>yu-tool-${version}</finalName>
+        <finalName>${artifactId}-${version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
