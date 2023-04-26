@@ -3,9 +3,11 @@ yutool:
   wx:
     redisTokenKey: yutools_wx_access_token1
     #公众号appid
-    appid: wx4963bb1e114c39ab
+#    appid: wx4963bb1e114c39ab
+    appid: wxda6555b2670a8bde
     #公众号appsecret
-    appsecret: 7fd5cb3b583cf5dd7e11e7225fdc04e8
+#    appsecret: 7fd5cb3b583cf5dd7e11e7225fdc04e8
+    appsecret: d8db9c5164ac6579bb9c86b50da42f7e
     #小程序appid 可选 需要跳转到小程序时添加
     appletAppid: xxx
     #小程序appsecret 可选
