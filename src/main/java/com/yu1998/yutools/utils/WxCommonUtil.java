@@ -96,4 +96,20 @@ public class WxCommonUtil {
         }
 
     }
+    /**
+     * 获取jsapi配置的临时签名
+     * @return
+     */
+    public String getJsapiTicket() throws YuToolsException {
+        String wx_ticket = YuToolsRedisUtil.get(yuToolsConfig.getWx().getRedisJsapiTicketKey());
+        if ((StrUtil.isEmpty(wx_ticket))){
+            this.getAccessTokenUri();
+            String result = HttpUtil.get(StrUtil.format(yuToolsConfig.getWx().getJsapiTicketUri(),this.accessToken));
+            JSONObject jSONResult = JSONUtil.parseObj(result);
+            YuToolsRedisUtil.set(yuToolsConfig.getWx().getRedisJsapiTicketKey(),jSONResult.getStr("ticket"),jSONResult.getInt("expires_in")-5, TimeUnit.SECONDS);
+            wx_ticket = jSONResult.getStr("ticket");
+        }
+        return wx_ticket;
+
+    }
 }

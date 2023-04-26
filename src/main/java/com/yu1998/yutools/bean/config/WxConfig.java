@@ -11,6 +11,7 @@ import lombok.Data;
 public class WxConfig {
 
     private String redisTokenKey = "yutools_wx_access_token";
+    private String redisJsapiTicketKey = "yutools_wx_jsapi_ticketKey";
     private String appid;
     private String appsecret;
     private String appletAppid;
@@ -22,6 +23,7 @@ public class WxConfig {
 
     private String accessTokenLoginUri = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={}&secret={}&code={}&grant_type=authorization_code";
     private String accessTokenUri = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}";
+    private String jsapiTicketUri = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={}&type=jsapi";
     private String sendMessageUri = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token={}";
     private String sendMenuUri = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token={}";
 }
