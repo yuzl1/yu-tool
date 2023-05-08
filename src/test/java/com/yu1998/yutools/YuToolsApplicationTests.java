@@ -37,34 +37,34 @@ class YuToolsApplicationTests {
 //		wxCommonUtil.sendMessage(wxMessage.getMessageBody());
 //		System.out.println("测试".length());
 //      ---------------菜单添加---------------------
-//		 String uri = "http://301test.raonecloud.com:8026/wx/";
-//		 Menu menu = new Menu();
-//		 List<Button> button = new ArrayList<>();
-//		 List<Button> subButton = new ArrayList<>();
-//		 Button button1 = ButtonEnum.getButton(ButtonEnum.TYPE_VIEW.getType());
-//		 button1.setName("零星维修");
-//		 button1.setUrl(uri+"pages/main/index");
-//		 subButton.add(button1);
-//		 Button button2 = ButtonEnum.getButton(ButtonEnum.TYPE_VIEW.getType());
-//		 button2.setName("满意度管理");
-//		 button2.setUrl(uri+"pages/mainRepairs/index");
-//		 subButton.add(button2);
-//		 Button button3 = ButtonEnum.getButton(ButtonEnum.TYPE_VIEW.getType());
-//		 button3.setName("运送管理");
-//		 button3.setUrl(uri+"pages/mainShip/index");
-//		 subButton.add(button3);
-//		 Button yiButton = Button.builder().name("服保系统").sub_button(subButton).build();
-//		 button.add(yiButton);
-//		 //-----------------------------------------------------
-//
-//
-//		 menu.setButton(button);
-//		 String s = JSONUtil.toJsonStr(menu);
-//		 System.out.println(s);
-//		 wxCommonUtil.sendMenu(menu);
+		 String uri = "http://301test.raonecloud.com/wx/";
+		 Menu menu = new Menu();
+		 List<Button> button = new ArrayList<>();
+		 List<Button> subButton = new ArrayList<>();
+		 Button button1 = ButtonEnum.getButton(ButtonEnum.TYPE_VIEW.getType());
+		 button1.setName("零星维修");
+		 button1.setUrl(uri+"pages/main/index");
+		 subButton.add(button1);
+		 Button button2 = ButtonEnum.getButton(ButtonEnum.TYPE_VIEW.getType());
+		 button2.setName("满意度管理");
+		 button2.setUrl(uri+"pages/mainRepairs/index");
+		 subButton.add(button2);
+		 Button button3 = ButtonEnum.getButton(ButtonEnum.TYPE_VIEW.getType());
+		 button3.setName("运送管理");
+		 button3.setUrl(uri+"pages/mainShip/index");
+		 subButton.add(button3);
+		 Button yiButton = Button.builder().name("服保系统").sub_button(subButton).build();
+		 button.add(yiButton);
+		 //-----------------------------------------------------
+
+
+		 menu.setButton(button);
+		 String s = JSONUtil.toJsonStr(menu);
+		 System.out.println(s);
+		 wxCommonUtil.sendMenu(menu);
 		//-------------获取jsapi签名---------
-		String jsapiTicket = wxCommonUtil.getJsapiTicket();
-		System.out.println(jsapiTicket);
+//		String jsapiTicket = wxCommonUtil.getJsapiTicket();
+//		System.out.println(jsapiTicket);
 	}
 
 
