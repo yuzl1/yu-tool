@@ -35,10 +35,7 @@ public class WxCommonUtil {
     /** token过期时间  */
     private long expiresIn;
 
-//    @PostConstruct
-//    public void init() throws YuToolsException {
-//        getAccessTokenUri();
-//    }
+
     /**
      * 获取微信全局token
      * @throws YuToolsException
@@ -58,9 +55,8 @@ public class WxCommonUtil {
                 throw new YuToolsException(CommonEnum.ERROR_TOKEN.getDesc());
             }
         }
-
-
     }
+
 
     /**
      * 发送微信模版消息
@@ -105,12 +101,30 @@ public class WxCommonUtil {
         String wx_ticket = YuToolsRedisUtil.get(yuToolsConfig.getWx().getRedisJsapiTicketKey());
         if ((StrUtil.isEmpty(wx_ticket))){
             this.getAccessTokenUri();
-            String result = HttpUtil.get(StrUtil.format(yuToolsConfig.getWx().getJsapiTicketUri(),this.accessToken));
-            JSONObject jSONResult = JSONUtil.parseObj(result);
+            String uri = StrUtil.format(StrUtil.format(yuToolsConfig.getWx().getJsapiTicketUri(),this.accessToken));
+            log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+            String restfulBody = HttpRequest.get(uri).execute().body();
+            log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+            JSONObject jSONResult = JSONUtil.parseObj(restfulBody);
             YuToolsRedisUtil.set(yuToolsConfig.getWx().getRedisJsapiTicketKey(),jSONResult.getStr("ticket"),jSONResult.getInt("expires_in")-5, TimeUnit.SECONDS);
             wx_ticket = jSONResult.getStr("ticket");
         }
         return wx_ticket;
+
+    }
+
+    /**
+     * 获取登录token 同时获取openid
+     * @param code
+     * @return
+     * @throws YuToolsException
+     */
+    public String getWxLoginToken(String code) throws YuToolsException {
+            String uri = StrUtil.format(StrUtil.format(yuToolsConfig.getWx().getAccessTokenLoginUri(),yuToolsConfig.getWx().getAppid(), yuToolsConfig.getWx().getAppsecret(),code));
+            log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+            String restfulBody = HttpRequest.get(uri).execute().body();
+            log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+        return restfulBody;
 
     }
 }

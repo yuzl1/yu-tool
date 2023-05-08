@@ -3,10 +3,10 @@ yutool:
   wx:
     redisTokenKey: yutools_wx_access_token1
     #公众号appid
-#    appid: wx4963bb1e114c39ab
+#    appid: wx8c39f3c5922f3fbb
     appid: wxda6555b2670a8bde
     #公众号appsecret
-#    appsecret: 7fd5cb3b583cf5dd7e11e7225fdc04e8
+#    appsecret: e383c7403b2a85cb52d407858444a9c9
     appsecret: d8db9c5164ac6579bb9c86b50da42f7e
     #小程序appid 可选 需要跳转到小程序时添加
     appletAppid: xxx
@@ -17,8 +17,8 @@ yutool:
 
 spring:
   redis:
-    host: 192.168.8.254
-    password: Abcd.123
+    host: 127.0.0.1
+    password: root
     port: 6379
     database: 1
     lettuce:
