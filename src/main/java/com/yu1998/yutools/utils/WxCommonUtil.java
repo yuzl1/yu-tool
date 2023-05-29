@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,17 +36,13 @@ public class WxCommonUtil {
     /** token过期时间  */
     private long expiresIn;
 
-//    @PostConstruct
-//    public void init() throws YuToolsException {
-//        getAccessTokenUri();
-//    }
-    private final static String REDIS_TOKEN_KEY = "yutools_wx_access_token";
+
     /**
      * 获取微信全局token
      * @throws YuToolsException
      */
     public void getAccessTokenUri() throws YuToolsException{
-        this.accessToken = YuToolsRedisUtil.get(REDIS_TOKEN_KEY);
+        this.accessToken = YuToolsRedisUtil.get(yuToolsConfig.getWx().getRedisTokenKey());
         if(StrUtil.isEmpty(accessToken)){
             String uri = StrUtil.format(yuToolsConfig.getWx().getAccessTokenUri(), yuToolsConfig.getWx().getAppid(), yuToolsConfig.getWx().getAppsecret());
             log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
@@ -54,13 +51,32 @@ public class WxCommonUtil {
             JSONObject restfulJson = JSONUtil.parseObj(restfulBody);
             this.accessToken = restfulJson.getStr("access_token");
             this.expiresIn = restfulJson.getLong("expires_in");
-            YuToolsRedisUtil.set(REDIS_TOKEN_KEY,accessToken,--expiresIn, TimeUnit.SECONDS);
+            YuToolsRedisUtil.set(yuToolsConfig.getWx().getRedisTokenKey(),accessToken,--expiresIn, TimeUnit.SECONDS);
             if(StrUtil.isEmpty(accessToken)){
                 throw new YuToolsException(CommonEnum.ERROR_TOKEN.getDesc());
             }
         }
+    }
 
-
+    /**
+     * 获取微信全局token 添加代理
+     * @throws YuToolsException
+     */
+    public void getAccessTokenUri(Proxy proxy) throws YuToolsException{
+        this.accessToken = YuToolsRedisUtil.get(yuToolsConfig.getWx().getRedisTokenKey());
+        if(StrUtil.isEmpty(accessToken)){
+            String uri = StrUtil.format(yuToolsConfig.getWx().getAccessTokenUri(), yuToolsConfig.getWx().getAppid(), yuToolsConfig.getWx().getAppsecret());
+            log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+            String restfulBody = HttpRequest.get(uri).setProxy(proxy).execute().body();
+            log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+            JSONObject restfulJson = JSONUtil.parseObj(restfulBody);
+            this.accessToken = restfulJson.getStr("access_token");
+            this.expiresIn = restfulJson.getLong("expires_in");
+            YuToolsRedisUtil.set(yuToolsConfig.getWx().getRedisTokenKey(),accessToken,--expiresIn, TimeUnit.SECONDS);
+            if(StrUtil.isEmpty(accessToken)){
+                throw new YuToolsException(CommonEnum.ERROR_TOKEN.getDesc());
+            }
+        }
     }
 
     /**
@@ -73,6 +89,22 @@ public class WxCommonUtil {
         String uri =StrUtil.format(yuToolsConfig.getWx().getSendMessageUri(), this.accessToken);
         log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
         String restfulBody = HttpRequest.post(uri).body(messageBody).execute().body();
+        log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+        JSONObject restfulJson = JSONUtil.parseObj(restfulBody);
+        if(CommonEnum.SUCCESS.getCode() != restfulJson.getInt("errcode")){
+            throw new YuToolsException(CommonEnum.ERROR_MENU.getDesc());
+        }
+    }
+    /**
+     * 发送微信模版消息 添加代理
+     * @return
+     * @throws YuToolsException
+     */
+    public void sendMessage(String messageBody,Proxy proxy) throws YuToolsException {
+        this.getAccessTokenUri(proxy);
+        String uri =StrUtil.format(yuToolsConfig.getWx().getSendMessageUri(), this.accessToken);
+        log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+        String restfulBody = HttpRequest.post(uri).body(messageBody).setProxy(proxy).execute().body();
         log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
         JSONObject restfulJson = JSONUtil.parseObj(restfulBody);
         if(CommonEnum.SUCCESS.getCode() != restfulJson.getInt("errcode")){
@@ -98,6 +130,24 @@ public class WxCommonUtil {
 
     }
     /**
+     * 设置微信公众号菜单 添加代理
+     * @param menu
+     * @throws YuToolsException
+     */
+    public void sendMenu(Menu menu,Proxy proxy) throws YuToolsException{
+        this.getAccessTokenUri(proxy);
+        String uri = StrUtil.format(yuToolsConfig.getWx().getSendMenuUri(), this.accessToken);
+        log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+        String restfulBody = HttpRequest.post(uri).body(JSONUtil.toJsonStr(menu)).setProxy(proxy).execute().body();
+        log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+        JSONObject restfulJson = JSONUtil.parseObj(restfulBody);
+        if (CommonEnum.SUCCESS.getCode() != restfulJson.getInt("errcode")){
+            throw new YuToolsException(CommonEnum.ERROR_MENU.getDesc());
+        }
+
+    }
+
+    /**
      * 获取jsapi配置的临时签名
      * @return
      */
@@ -108,6 +158,25 @@ public class WxCommonUtil {
             String uri = StrUtil.format(StrUtil.format(yuToolsConfig.getWx().getJsapiTicketUri(),this.accessToken));
             log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
             String restfulBody = HttpRequest.get(uri).execute().body();
+            log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+            JSONObject jSONResult = JSONUtil.parseObj(restfulBody);
+            YuToolsRedisUtil.set(yuToolsConfig.getWx().getRedisJsapiTicketKey(),jSONResult.getStr("ticket"),jSONResult.getInt("expires_in")-5, TimeUnit.SECONDS);
+            wx_ticket = jSONResult.getStr("ticket");
+        }
+        return wx_ticket;
+
+    }
+    /**
+     * 获取jsapi配置的临时签名 添加代理
+     * @return
+     */
+    public String getJsapiTicket(Proxy proxy) throws YuToolsException {
+        String wx_ticket = YuToolsRedisUtil.get(yuToolsConfig.getWx().getRedisJsapiTicketKey());
+        if ((StrUtil.isEmpty(wx_ticket))){
+            this.getAccessTokenUri(proxy);
+            String uri = StrUtil.format(StrUtil.format(yuToolsConfig.getWx().getJsapiTicketUri(),this.accessToken));
+            log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+            String restfulBody = HttpRequest.get(uri).setProxy(proxy).execute().body();
             log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
             JSONObject jSONResult = JSONUtil.parseObj(restfulBody);
             YuToolsRedisUtil.set(yuToolsConfig.getWx().getRedisJsapiTicketKey(),jSONResult.getStr("ticket"),jSONResult.getInt("expires_in")-5, TimeUnit.SECONDS);
@@ -127,6 +196,20 @@ public class WxCommonUtil {
         String uri = StrUtil.format(StrUtil.format(yuToolsConfig.getWx().getAccessTokenLoginUri(),yuToolsConfig.getWx().getAppid(), yuToolsConfig.getWx().getAppsecret(),code));
         log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
         String restfulBody = HttpRequest.get(uri).execute().body();
+        log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
+        return restfulBody;
+
+    }
+    /**
+     * 获取登录token 同时获取openid 添加代理
+     * @param code
+     * @return
+     * @throws YuToolsException
+     */
+    public String getWxLoginToken(String code,Proxy proxy) throws YuToolsException {
+        String uri = StrUtil.format(StrUtil.format(yuToolsConfig.getWx().getAccessTokenLoginUri(),yuToolsConfig.getWx().getAppid(), yuToolsConfig.getWx().getAppsecret(),code));
+        log.info("方法{}--请求地址：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),uri);
+        String restfulBody = HttpRequest.get(uri).setProxy(proxy).execute().body();
         log.info("方法{}--请求结果：{}",Thread.currentThread().getStackTrace()[1].getMethodName(),restfulBody);
         return restfulBody;
 
