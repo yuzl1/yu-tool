@@ -5,6 +5,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.util.List;
+
 /**
  * @author Duke_yzl
  * @date 20230219.01
@@ -16,6 +19,12 @@ import org.springframework.stereotype.Component;
 public class YuToolsConfig {
 
     private WxConfig wx;
+    private List<WxConfig> wxs;
 
+
+    @PostConstruct
+    public void init() {
+        System.out.println("Yu_Tool已经注入！");
+    }
 
 }

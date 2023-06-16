@@ -1,0 +1,5 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.yu1998.yutools.config.YuToolsConfig,\
+  com.yu1998.yutools.utils.YuToolsRedisUtil,\
+  com.yu1998.yutools.utils.WxCommonUtil

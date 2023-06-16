@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.yu1998</groupId>
     <artifactId>yu-tool</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.4</version>
     <name>yu-tool</name>
     <description>yu-tool</description>
     <properties>
